@@ -1,0 +1,10 @@
+{
+  "shipping": 60,
+  "freeShippingAbove": 499,
+  "items": {
+    "chilli-150g": { "name": "Red Chilli Powder", "size": "150g", "price": 99, "img": "images/chilli-front.webp" },
+    "chilli-250g": { "name": "Red Chilli Powder", "size": "250g", "price": 149, "img": "images/chilli-front.webp" },
+    "haldi-150g": { "name": "Turmeric Powder", "size": "150g", "price": 149, "img": "images/turmeric-front.webp" },
+    "haldi-250g": { "name": "Turmeric Powder", "size": "250g", "price": 229, "img": "images/turmeric-front.webp" }
+  }
+}

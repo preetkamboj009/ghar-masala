@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout | Ghar Masala</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#7b1c1c">
+  <link rel="icon" href="images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a href="index.html" class="brand" aria-label="Ghar Masala home"><img src="images/logo.png" alt="Ghar Masala logo" width="52" height="52"><span>Ghar Masala</span></a>
+    <a class="btn btn-sm btn-ghost" href="index.html#shop" style="margin-left:auto">Continue Shopping</a>
+  </div>
+</header>
+
+<main class="policy">
+  <div class="wrap">
+    <h1>Checkout</h1>
+
+    <p class="co-empty" hidden>Your cart is empty. <a href="index.html#shop">Shop our spices</a></p>
+
+    <div class="co-in">
+      <section class="co-box">
+        <h2>Your order</h2>
+        <div class="co-items"></div>
+        <dl class="co-sum">
+          <dt>Subtotal</dt><dd class="co-sub"></dd>
+          <dt>Shipping</dt><dd class="co-ship"></dd>
+          <dt class="tot">Total</dt><dd class="tot co-total"></dd>
+        </dl>
+        <p class="co-free"></p>
+        <p class="co-note">Prices include GST.</p>
+      </section>
+
+      <form class="co-box co-form" method="post" action="pay.php">
+        <h2>Delivery details</h2>
+        <label>Full name<input name="name" required maxlength="60" autocomplete="name"></label>
+        <label>Email<input name="email" type="email" required maxlength="80" autocomplete="email"></label>
+        <label>Mobile number<input name="phone" type="tel" required pattern="[6-9][0-9]{9}" maxlength="10" inputmode="numeric" autocomplete="tel-national" placeholder="10-digit mobile"></label>
+        <label>Address<textarea name="address" required maxlength="200" rows="3" autocomplete="street-address" placeholder="House no., street, village / area"></textarea></label>
+        <div class="co-two">
+          <label>City<input name="city" required maxlength="40" autocomplete="address-level2"></label>
+          <label>Pin code<input name="pincode" required pattern="[0-9]{6}" maxlength="6" inputmode="numeric" autocomplete="postal-code"></label>
+        </div>
+        <label>State<input name="state" required maxlength="40" autocomplete="address-level1"></label>
+        <input type="hidden" name="cart">
+        <button class="btn btn-primary co-pay" type="submit" disabled>Online payment opening soon</button>
+        <p class="co-note">Payments are processed securely by PayU: UPI, cards, net banking and wallets. We never see your card or UPI details. By paying you agree to our <a href="policies.html#terms">Terms</a> and <a href="policies.html#refund">Refund Policy</a>.</p>
+      </form>
+    </div>
+  </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
