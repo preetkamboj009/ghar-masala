@@ -123,3 +123,11 @@ fetch("prices.json").then((r) => r.json()).then((p) => {
   cart = cart.filter((c) => P.items[c.id]); // drop products that no longer exist
   save();
 }).catch(() => {}).finally(render);
+
+// videos: play only while on screen (saves mobile data), never autoplay for reduced-motion users
+if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const vio = new IntersectionObserver((es) => es.forEach((e) => {
+    e.isIntersecting ? e.target.play().catch(() => {}) : e.target.pause();
+  }), { threshold: 0.25 });
+  document.querySelectorAll(".film video").forEach((v) => vio.observe(v));
+}
