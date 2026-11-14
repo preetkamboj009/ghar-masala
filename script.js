@@ -1,5 +1,41 @@
-// Cart lives in this browser (localStorage) so it survives the move to checkout.html.
+// Cart lives in this browser (localStorage) so it survives page loads; checkout is a <dialog> on every page.
 // Prices come from prices.json; pay.php recalculates the total on the server, so nothing here is trusted.
+document.body.insertAdjacentHTML("beforeend", `
+<dialog class="co-dialog" aria-label="Checkout">
+  <form method="dialog"><button class="co-x" aria-label="Close checkout">×</button></form>
+  <h2>Checkout</h2>
+  <p class="co-empty" hidden>Your cart is empty. Pick a spice to get started.</p>
+  <div class="co-in">
+    <div class="co-items"></div>
+    <dl class="co-sum">
+      <dt>Subtotal</dt><dd class="co-sub"></dd>
+      <dt>Shipping</dt><dd class="co-ship"></dd>
+      <dt class="tot">Total</dt><dd class="tot co-total"></dd>
+    </dl>
+    <p class="co-free"></p>
+    <form class="co-form" method="post" action="pay.php">
+      <h3>Delivery details</h3>
+      <label>Full name<input name="name" required maxlength="60" autocomplete="name"></label>
+      <label>Mobile number<input name="phone" type="tel" required pattern="[6-9][0-9]{9}" maxlength="10" inputmode="numeric" autocomplete="tel-national" placeholder="10-digit mobile"></label>
+      <label>Email<input name="email" type="email" required maxlength="80" autocomplete="email"></label>
+      <label>Address<textarea name="address" required maxlength="200" rows="2" autocomplete="street-address" placeholder="House no., street, village / area"></textarea></label>
+      <div class="co-two">
+        <label>City<input name="city" required maxlength="40" autocomplete="address-level2"></label>
+        <label>Pin code<input name="pincode" required pattern="[0-9]{6}" maxlength="6" inputmode="numeric" autocomplete="postal-code"></label>
+      </div>
+      <label>State<input name="state" required maxlength="40" autocomplete="address-level1"></label>
+      <input type="hidden" name="cart">
+      <button class="btn btn-primary co-pay" type="submit" disabled>Pay Securely</button>
+      <p class="co-note">Paid securely through PayU by UPI, card, net banking or wallet. We never see your card or UPI details. Prices include GST. By paying you agree to our <a href="policies.html#terms">Terms</a> and <a href="policies.html#refund">Refund Policy</a>.</p>
+    </form>
+  </div>
+</dialog>`);
+const dlg = document.querySelector(".co-dialog");
+const openCheckout = () => { render(); dlg.showModal(); };
+dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); }); // tap outside closes
+document.addEventListener("click", (e) => {
+  if (e.target.closest('a[href="#checkout"]')) { e.preventDefault(); openCheckout(); }
+});
 const fmt = (n) => "₹" + n.toLocaleString("en-IN");
 let P = { shipping: 0, items: {} };
 let cart = [];
@@ -23,6 +59,7 @@ function render() {
   document.querySelectorAll(".cart-n").forEach((el) => (el.textContent = count()));
 
   document.querySelectorAll(".product").forEach((p) => {
+    if (!p.querySelector(".price")) return;
     const price = item(`${p.dataset.id}-${p.querySelector('[aria-checked="true"]').dataset.size}`).price;
     p.querySelector(".price").textContent = price ? fmt(price) : "Price coming soon";
   });
@@ -67,7 +104,7 @@ document.querySelectorAll(".product").forEach((p) => {
   const main = p.querySelector(".main-img img");
   const out = p.querySelector(".qty output");
   const id = () => `${p.dataset.id}-${p.querySelector('[aria-checked="true"]').dataset.size}`;
-  const addToCart = () => setQty(id(), (cart.find((c) => c.id === id())?.qty || 0) + +out.value);
+  const addToCart = () => setQty(id(), (cart.find((c) => c.id === id())?.qty || 0) + (out ? +out.value : 1));
 
   p.querySelectorAll(".thumbs button").forEach((b) => (b.onclick = () => {
     p.querySelector(".thumbs .on").classList.remove("on");
@@ -84,12 +121,13 @@ document.querySelectorAll(".product").forEach((p) => {
     out.value = Math.max(1, Math.min(20, +out.value + +b.dataset.q));
   }));
 
-  p.querySelector(".add").onclick = (e) => {
+  const add = p.querySelector(".add");
+  if (add) add.onclick = () => {
     addToCart();
-    e.target.textContent = "Added ✓";
-    setTimeout(() => (e.target.textContent = "Add to Cart"), 1400);
+    add.textContent = "Added ✓";
+    setTimeout(() => (add.textContent = "Add to Cart"), 1400);
   };
-  p.querySelector(".now").onclick = () => { addToCart(); location.href = "checkout.html"; };
+  p.querySelector(".now").onclick = () => { addToCart(); openCheckout(); };
 });
 
 document.querySelector(".order-clear")?.addEventListener("click", () => { cart = []; save(); render(); });
@@ -122,7 +160,10 @@ fetch("prices.json").then((r) => r.json()).then((p) => {
   P = p;
   cart = cart.filter((c) => P.items[c.id]); // drop products that no longer exist
   save();
-}).catch(() => {}).finally(render);
+}).catch(() => {}).finally(() => {
+  render();
+  if (location.hash === "#checkout") openCheckout(); // back from a failed payment
+});
 
 // videos: play only while on screen (saves mobile data), never autoplay for reduced-motion users
 if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {

@@ -54,7 +54,7 @@ $h = fn($v) => htmlspecialchars($v);
   <h1>Payment not completed</h1>
   <p>Your payment did not go through, so no money has been taken for this order. If money was debited, it will be returned to you automatically by your bank.</p>
   <p>Order ID: <?= $h($p('txnid')) ?></p>
-  <a class="btn btn-primary" href="checkout.html">Try again</a>
+  <a class="btn btn-primary" href="index.html#checkout">Try again</a>
 <?php endif; ?>
   <p class="co-note">Questions? Call +91 94658 00029 or email support@gharmasala.com.</p>
 </section></div></main>

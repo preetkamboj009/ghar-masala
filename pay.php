@@ -3,7 +3,7 @@
 // Secrets live in payu-config.php ONE folder above the website root (see payu-config.example.php).
 
 $cfgFile = dirname(__DIR__) . '/payu-config.php';
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') { header('Location: checkout.html'); exit; }
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') { header('Location: index.html'); exit; }
 if (!is_file($cfgFile)) { fail('Online payment is not set up yet. Please try again later.'); }
 $cfg = require $cfgFile;
 $data = json_decode(file_get_contents(__DIR__ . '/prices.json'), true);
@@ -13,7 +13,7 @@ function fail($msg) {
     echo '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
        . '<link rel="stylesheet" href="style.css"><main class="policy"><div class="wrap narrow"><section>'
        . '<h1>Could not start payment</h1><p>' . htmlspecialchars($msg) . '</p>'
-       . '<a class="btn btn-primary" href="checkout.html">Back to checkout</a></section></div></main>';
+       . '<a class="btn btn-primary" href="index.html#checkout">Back to checkout</a></section></div></main>';
     exit;
 }
 
